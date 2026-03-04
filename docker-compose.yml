@@ -4,9 +4,9 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: serendipity
-      POSTGRES_PASSWORD: serendipity
-      POSTGRES_DB: serendipity
+      POSTGRES_USER: meetmit
+      POSTGRES_PASSWORD: meetmit
+      POSTGRES_DB: meetmit
     ports:
       - "5432:5432"
     volumes:
@@ -17,7 +17,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: "postgresql://serendipity:serendipity@db:5432/serendipity?schema=public"
+      DATABASE_URL: "postgresql://meetmit:meetmit@db:5432/meetmit?schema=public"
       API_SECRET: "dev-secret"
       NEXT_PUBLIC_APP_URL: "http://localhost:3000"
     depends_on:

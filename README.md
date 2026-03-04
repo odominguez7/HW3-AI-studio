@@ -1,8 +1,8 @@
-# Serendipity
+# meetMIT
 
 **Real connections, agentic precision.**
 
-Serendipity is an AI-powered campus connection platform that turns free moments into meaningful in-person meets. It uses Big Five (OCEAN) affinity matching, agent-assisted scheduling, and feedback loops to help verified MIT/Harvard users discover their tribe.
+meetMIT is an AI-powered campus connection platform that turns free moments into meaningful in-person meets. It uses Big Five (OCEAN) affinity matching, agent-assisted scheduling, and feedback loops to help verified MIT/Harvard users discover their tribe.
 
 ## Quick Start (Local)
 
@@ -33,11 +33,11 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ```bash
 # Build and push container
-gcloud builds submit --tag gcr.io/PROJECT_ID/serendipity
+gcloud builds submit --tag gcr.io/PROJECT_ID/meetmit
 
 # Deploy
-gcloud run deploy serendipity \
-  --image gcr.io/PROJECT_ID/serendipity \
+gcloud run deploy meetmit \
+  --image gcr.io/PROJECT_ID/meetmit \
   --platform managed \
   --region us-east1 \
   --allow-unauthenticated \

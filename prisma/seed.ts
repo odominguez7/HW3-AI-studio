@@ -67,7 +67,7 @@ const OFFERS = [
 ];
 
 async function main() {
-  console.log("Seeding Serendipity database...");
+  console.log("Seeding meetMIT database...");
 
   const users = [];
   for (const p of PERSONAS) {

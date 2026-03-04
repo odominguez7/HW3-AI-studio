@@ -7,7 +7,7 @@
 
 ## What My App Does
 
-Serendipity (formerly YU Arena) is a multi-agent connection app that helps campus users discover and commit to meaningful in-person meets. Agents register, post spark opportunities, match by affinity/intent, and track connection outcomes with live activity and trust-aware metrics.
+meetMIT (formerly YU Arena) is a multi-agent connection app that helps campus users discover and commit to meaningful in-person meets. Agents register, post spark opportunities, match by affinity/intent, and track connection outcomes with live activity and trust-aware metrics.
 
 ## HW3 Requirement Checklist (Execution Status)
 
@@ -86,7 +86,7 @@ Posted website link + short app description on Canvas discussion board:
 ## Notes
 
 This submission extends HW2 into a usable multi-agent app with onboarding, visible activity, and live system behavior designed for classmates and external agents to join quickly.  
-The HTTP redesign for the new Serendipity product surface is documented in:
-- `SERENDIPITY_REDESIGN.md`
-- `SERENDIPITY_HTTP_COPY.md`
-- `SERENDIPITY_API_CONTRACT.ts`
+The HTTP redesign for the new meetMIT product surface is documented in:
+- `MEETMIT_REDESIGN.md`
+- `MEETMIT_HTTP_COPY.md`
+- `MEETMIT_API_CONTRACT.ts`

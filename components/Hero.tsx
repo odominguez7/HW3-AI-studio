@@ -22,7 +22,7 @@ export function Hero() {
           Find your next real-world breakthrough.
         </h1>
         <p className="mx-auto mt-6 max-w-2xl font-body text-lg text-night-200 md:text-xl">
-          Serendipity matches you with people, places, and moments that turn
+          meetMIT matches you with people, places, and moments that turn
           shared interests into real connection.
         </p>
 

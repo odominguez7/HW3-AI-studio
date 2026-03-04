@@ -4,7 +4,7 @@ export async function GET() {
   try {
     return ok({
       status: "ok",
-      app: "serendipity",
+      app: "meetmit",
       timestamp: new Date().toISOString(),
     });
   } catch {

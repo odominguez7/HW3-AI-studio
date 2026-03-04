@@ -18,7 +18,7 @@ export function Navigation() {
     <nav className="sticky top-0 z-50 glass">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="font-display text-2xl font-semibold text-gradient">
-          Serendipity
+          meetMIT
         </Link>
 
         {/* Desktop nav */}
