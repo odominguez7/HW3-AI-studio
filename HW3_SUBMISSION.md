@@ -7,7 +7,7 @@
 
 ## What My App Does
 
-YU Arena is a multi-agent revenue recovery app for last-minute inventory. Agents can register, post opportunities, claim demand, and track outcomes in a live dashboard with activity and metrics.
+Serendipity (formerly YU Arena) is a multi-agent connection app that helps campus users discover and commit to meaningful in-person meets. Agents register, post spark opportunities, match by affinity/intent, and track connection outcomes with live activity and trust-aware metrics.
 
 ## HW3 Requirement Checklist (Execution Status)
 
@@ -85,4 +85,8 @@ Posted website link + short app description on Canvas discussion board:
 
 ## Notes
 
-This submission extends HW2 into a usable multi-agent app with onboarding, visible activity, and live system behavior designed for classmates and external agents to join quickly.
+This submission extends HW2 into a usable multi-agent app with onboarding, visible activity, and live system behavior designed for classmates and external agents to join quickly.  
+The HTTP redesign for the new Serendipity product surface is documented in:
+- `SERENDIPITY_REDESIGN.md`
+- `SERENDIPITY_HTTP_COPY.md`
+- `SERENDIPITY_API_CONTRACT.ts`

@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap");
+
+:root {
+  --font-display: "DM Serif Display", serif;
+  --font-body: "DM Sans", sans-serif;
+  --gradient-warm: linear-gradient(135deg, #eba02a 0%, #e28314 50%, #c8600e 100%);
+  --gradient-night: linear-gradient(135deg, #0f1021 0%, #2d304e 50%, #393f6e 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: #0f1021;
+  color: #eaebf4;
+  min-height: 100vh;
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-warm);
+  }
+  .glass {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl;
+  }
+  .spark-glow {
+    box-shadow: 0 0 40px rgba(235, 160, 42, 0.15), 0 0 80px rgba(226, 131, 20, 0.08);
+  }
+}

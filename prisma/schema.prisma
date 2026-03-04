@@ -1,0 +1,246 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Identity ───────────────────────────────────────────
+
+model User {
+  id              String            @id @default(cuid())
+  email           String            @unique
+  campus          Campus
+  verified        Boolean           @default(false)
+  automationMode  AutomationMode    @default(manual)
+  calendarLinked  Boolean           @default(false)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  affinityProfile AffinityProfile?
+  availModes      UserAvailMode[]
+  sparksCreated   Spark[]           @relation("SparkCreator")
+  commitments     SparkCommitment[]
+  feedbacks       SparkFeedback[]
+  offersPosted    Offer[]
+  trustReports    TrustReport[]     @relation("Reporter")
+  trustReceived   TrustReport[]     @relation("ReportTarget")
+  blocksIssued    Block[]           @relation("Blocker")
+  blocksReceived  Block[]           @relation("Blocked")
+
+  @@map("users")
+}
+
+enum Campus {
+  mit
+  harvard
+}
+
+enum AutomationMode {
+  manual
+  assisted
+  autopilot
+}
+
+model UserAvailMode {
+  id     String        @id @default(cuid())
+  userId String
+  mode   AvailMode
+  user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, mode])
+  @@map("user_avail_modes")
+}
+
+enum AvailMode {
+  casual
+  study_only
+  founder_mode
+  zen_only
+}
+
+// ─── Affinity ───────────────────────────────────────────
+
+model AffinityProfile {
+  id                String  @id @default(cuid())
+  userId            String  @unique
+  openness          Float
+  conscientiousness Float
+  extraversion      Float
+  agreeableness     Float
+  neuroticism       Float
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("affinity_profiles")
+}
+
+// ─── Sparks ─────────────────────────────────────────────
+
+model Spark {
+  id              String            @id @default(cuid())
+  creatorId       String
+  sparkType       SparkType
+  locationHint    String
+  durationMinutes Int
+  startsAt        DateTime
+  visibility      Visibility        @default(public)
+  status          SparkStatus       @default(open)
+  createdAt       DateTime          @default(now())
+
+  creator         User              @relation("SparkCreator", fields: [creatorId], references: [id])
+  commitments     SparkCommitment[]
+  feedbacks       SparkFeedback[]
+  trustReports    TrustReport[]
+
+  @@map("sparks")
+}
+
+enum SparkType {
+  study_sync
+  coffee_clash
+  lunch_link
+  walk_wave
+  homework_hack
+  recess_rush
+  blitz_brainstorm
+}
+
+enum Visibility {
+  public
+  group_only
+  invite_only
+}
+
+enum SparkStatus {
+  open
+  full
+  in_progress
+  completed
+  cancelled
+}
+
+model SparkCommitment {
+  id        String   @id @default(cuid())
+  sparkId   String
+  userId    String
+  note      String?
+  createdAt DateTime @default(now())
+
+  spark     Spark    @relation(fields: [sparkId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([sparkId, userId])
+  @@map("spark_commitments")
+}
+
+model SparkFeedback {
+  id             String   @id @default(cuid())
+  sparkId        String
+  userId         String
+  rating         Int
+  repeatInterest Boolean
+  whatWorked     String
+  createdAt      DateTime @default(now())
+
+  spark          Spark    @relation(fields: [sparkId], references: [id], onDelete: Cascade)
+  user           User     @relation(fields: [userId], references: [id])
+
+  @@unique([sparkId, userId])
+  @@map("spark_feedbacks")
+}
+
+// ─── Offers ─────────────────────────────────────────────
+
+model Offer {
+  id                      String   @id @default(cuid())
+  userId                  String
+  want                    String
+  offer                   String
+  preferredDurationMinutes Int?
+  fulfilled               Boolean  @default(false)
+  createdAt               DateTime @default(now())
+
+  user                    User     @relation(fields: [userId], references: [id])
+
+  @@map("offers")
+}
+
+// ─── Trust & Safety ─────────────────────────────────────
+
+model TrustReport {
+  id           String       @id @default(cuid())
+  reporterId   String
+  targetUserId String
+  sparkId      String?
+  reason       ReportReason
+  details      String
+  resolved     Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+
+  reporter     User         @relation("Reporter", fields: [reporterId], references: [id])
+  target       User         @relation("ReportTarget", fields: [targetUserId], references: [id])
+  spark        Spark?       @relation(fields: [sparkId], references: [id])
+
+  @@map("trust_reports")
+}
+
+enum ReportReason {
+  safety
+  harassment
+  no_show
+  other
+}
+
+model Block {
+  id            String   @id @default(cuid())
+  requesterId   String
+  blockedUserId String
+  createdAt     DateTime @default(now())
+
+  requester     User     @relation("Blocker", fields: [requesterId], references: [id])
+  blocked       User     @relation("Blocked", fields: [blockedUserId], references: [id])
+
+  @@unique([requesterId, blockedUserId])
+  @@map("blocks")
+}
+
+// ─── Metrics (aggregate, privacy-safe) ──────────────────
+
+model ConnectionMetric {
+  id              String   @id @default(cuid())
+  date            DateTime @db.Date
+  totalSparks     Int      @default(0)
+  totalCommits    Int      @default(0)
+  totalFeedbacks  Int      @default(0)
+  avgRating       Float    @default(0)
+  repeatMeetRate  Float    @default(0)
+  topLocations    String[] @default([])
+  topSparkTypes   String[] @default([])
+
+  @@unique([date])
+  @@map("connection_metrics")
+}
+
+// ─── Activity Log ───────────────────────────────────────
+
+model Activity {
+  id        String       @id @default(cuid())
+  type      ActivityType
+  payload   Json
+  createdAt DateTime     @default(now())
+
+  @@map("activities")
+}
+
+enum ActivityType {
+  user_joined
+  spark_created
+  spark_committed
+  spark_completed
+  feedback_given
+  offer_posted
+  offer_fulfilled
+  trust_report
+}
