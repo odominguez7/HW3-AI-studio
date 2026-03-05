@@ -71,3 +71,33 @@ export const TrustBlockSchema = z.object({
   requesterId: z.string().min(1),
   blockedUserId: z.string().min(1),
 });
+
+export const AgentRegisterSchema = z.object({
+  name: z.string().min(1).max(120),
+  capabilities: z.array(z.string().min(1).max(80)).min(1),
+  endpoint: z.string().url(),
+  contact_email: z.string().email().optional().or(z.literal("")),
+  agent_type: z.enum([
+    "study-helper",
+    "founder-advisor",
+    "wellness",
+    "moderator",
+    "custom",
+  ]),
+});
+
+export const AgentStatusSchema = z.object({
+  status: z.enum(["active", "paused"]),
+});
+
+export const AgentInteractSchema = z.object({
+  task: z.string().min(1).max(2000),
+  context: z.record(z.unknown()).optional(),
+  meetmit_user: z.string().optional(),
+});
+
+export const AgentReportSchema = z.object({
+  reason: z.string().min(1).max(120),
+  details: z.string().max(1000).optional(),
+  reporterId: z.string().optional(),
+});

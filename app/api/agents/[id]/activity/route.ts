@@ -1,0 +1,17 @@
+import { NextRequest } from "next/server";
+import { err, ok } from "@/lib/api";
+import { listAgentActivity } from "@/lib/agents-store";
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const limit = Number(req.nextUrl.searchParams.get("limit") ?? "100");
+    const offset = Number(req.nextUrl.searchParams.get("offset") ?? "0");
+    const activity = await listAgentActivity(params.id, limit, offset);
+    return ok({ activity, limit, offset });
+  } catch {
+    return err("Internal error", 500);
+  }
+}
