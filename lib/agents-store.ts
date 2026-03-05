@@ -67,6 +67,45 @@ function normalizeId(name: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+async function loadManifestAgents(): Promise<AgentRecord[]> {
+  try {
+    const manifestPath = path.join(process.cwd(), "agents.manifest.json");
+    const raw = await readFile(manifestPath, "utf8");
+    const manifest = JSON.parse(raw) as {
+      agents?: Array<{
+        id: string;
+        name: string;
+        capabilities: string[];
+        endpoint: string;
+        agent_type: AgentType;
+      }>;
+    };
+    const now = nowIso();
+    const openclawBase =
+      process.env.OPENCLAW_BASE_URL ||
+      process.env.NEXT_PUBLIC_APP_URL ||
+      "https://meetmit-api-114661584115.us-east1.run.app";
+
+    return (manifest.agents ?? []).map((a) => ({
+      id: a.id,
+      name: a.name,
+      capabilities: a.capabilities ?? [],
+      endpoint: (a.endpoint || "").replace("https://<openclaw-service>", openclawBase),
+      contactEmail: undefined,
+      agentType: a.agent_type,
+      agentToken: `agnt_${a.id.replace(/[^a-z0-9]/gi, "")}`,
+      status: "active",
+      createdAt: now,
+      lastSeen: null,
+      sessionsToday: 0,
+      totalSessions: 0,
+      reports: [],
+    }));
+  } catch {
+    return [];
+  }
+}
+
 function ensureUniqueId(existing: Set<string>, preferred: string) {
   if (!existing.has(preferred)) return preferred;
   let n = 2;
@@ -79,7 +118,7 @@ async function ensureStoreFile() {
   try {
     await readFile(STORE_FILE, "utf8");
   } catch {
-    const initial: AgentStore = { agents: [], activity: [] };
+    const initial: AgentStore = { agents: await loadManifestAgents(), activity: [] };
     await writeFile(STORE_FILE, JSON.stringify(initial, null, 2) + "\n", "utf8");
   }
 }
@@ -89,7 +128,11 @@ async function readStore(): Promise<AgentStore> {
   const raw = await readFile(STORE_FILE, "utf8");
   const parsed = JSON.parse(raw) as AgentStore;
   if (!Array.isArray(parsed.agents) || !Array.isArray(parsed.activity)) {
-    return { agents: [], activity: [] };
+    return { agents: await loadManifestAgents(), activity: [] };
+  }
+  if (parsed.agents.length === 0) {
+    parsed.agents = await loadManifestAgents();
+    await writeStore(parsed);
   }
   return parsed;
 }
